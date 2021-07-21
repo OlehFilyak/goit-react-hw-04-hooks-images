@@ -1,12 +1,8 @@
-import React from "react";
-
 function Button({ onLoadMore }) {
   return (
-    <>
-      <button type="button" onClick={onLoadMore}>
-        Load more...
-      </button>
-    </>
+    <button type="button" onClick={onLoadMore} className="Button">
+      Load more...
+    </button>
   );
 }
 
