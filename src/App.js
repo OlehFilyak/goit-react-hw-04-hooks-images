@@ -39,6 +39,10 @@ function App() {
     // console.log(hits);
     setImages((prevState) => [...prevState, ...hits]);
     setPageQuery((prevPage) => prevPage + 1);
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   return (
