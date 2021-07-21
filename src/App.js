@@ -22,11 +22,12 @@ function App() {
 
   const handleGetPictures = async (e) => {
     e.preventDefault();
+    setPageQuery(1);
     // getPictures(searchQuery, pageQuery);
 
     const {
       data: { hits },
-    } = await getPictures(searchQuery, pageQuery);
+    } = await getPictures(searchQuery, 1);
     // console.log(resp); Потім
     setImages(hits);
     setPageQuery((prevPage) => prevPage + 1);
