@@ -1,7 +1,11 @@
 import React from "react";
 
 function ImageGallary() {
-  return <div></div>;
+  return (
+    <>
+      <ul className="ImageGallery"></ul>
+    </>
+  );
 }
 
 export default ImageGallary;
