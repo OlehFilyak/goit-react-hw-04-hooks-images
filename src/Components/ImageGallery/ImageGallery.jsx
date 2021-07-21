@@ -1,11 +1,16 @@
-import React from "react";
 import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 
-const ImageGallary = ({ images }) => {
+const ImageGallary = ({ images, showModal }) => {
   return (
     <ul className="ImageGallery">
-      {images.map(({ tags, webformatURL, id }) => (
-        <ImageGalleryItem alt={tags} url={webformatURL} key={id} />
+      {images.map(({ tags, webformatURL, id, largeImageURL }) => (
+        <ImageGalleryItem
+          alt={tags}
+          url={webformatURL}
+          key={id}
+          modalUrl={largeImageURL}
+          showModal={showModal}
+        />
       ))}
     </ul>
   );

@@ -1,11 +1,11 @@
 import React from "react";
 
-function Modal() {
+function Modal({ modalUrl, onCloseModal }) {
   return (
     <>
-      <div className="Overlay">
+      <div className="Overlay" onClick={onCloseModal}>
         <div className="Modal">
-          <img src="" alt="" />
+          <img src={modalUrl} alt="" />
         </div>
       </div>
     </>

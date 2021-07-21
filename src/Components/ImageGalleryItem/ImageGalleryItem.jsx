@@ -1,9 +1,13 @@
-import React from "react";
-
-const ImageGallaryItem = ({ alt, url, id }) => {
+const ImageGallaryItem = ({ alt, url, id, modalUrl, showModal }) => {
   return (
     <li className="ImageGalleryItem">
-      <img src={url} alt={alt} className="ImageGalleryItem-image" id={id} />
+      <img
+        onClick={() => showModal(modalUrl)}
+        src={url}
+        alt={alt}
+        className="ImageGalleryItem-image"
+        id={id}
+      />
     </li>
   );
 };
