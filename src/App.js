@@ -7,16 +7,49 @@ import ImageGallery from "./Components/ImageGallery";
 import Button from "./Components/Button";
 import Searchbar from "./Components/Searchbar";
 
+import getPictures from "./helpers/fetch";
+
 import "./App.css";
 
 function App() {
-  const [searchQuery, SetSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [pageQuery, setPageQuery] = useState(1);
+  const [images, setImages] = useState([]);
+
+  const handleSetQuery = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleGetPictures = async (e) => {
+    e.preventDefault();
+    // getPictures(searchQuery, pageQuery);
+
+    const {
+      data: { hits },
+    } = await getPictures(searchQuery, pageQuery);
+    // console.log(resp); Потім
+    setImages(hits);
+    setPageQuery((prevPage) => prevPage + 1);
+  };
+
+  const handleLoadMore = async () => {
+    const {
+      data: { hits },
+    } = await getPictures(searchQuery, pageQuery);
+    // console.log(hits);
+    setImages((prevState) => [...prevState, ...hits]);
+    setPageQuery((prevPage) => prevPage + 1);
+  };
 
   return (
     <div className="App">
-      <Searchbar />
-      <ImageGallery />
-      <Button />
+      <Searchbar
+        onSetQuery={handleSetQuery}
+        searchQuery={searchQuery}
+        onSubmit={handleGetPictures}
+      />
+      <ImageGallery images={images} />
+      <Button onLoadMore={handleLoadMore} />
       {/* <Modal/> */}
     </div>
   );
