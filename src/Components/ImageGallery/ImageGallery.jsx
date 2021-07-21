@@ -1,11 +1,14 @@
 import React from "react";
+import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 
-function ImageGallary() {
+const ImageGallary = ({ images }) => {
   return (
-    <>
-      <ul className="ImageGallery"></ul>
-    </>
+    <ul className="ImageGallery">
+      {images.map(({ tags, webformatURL, id }) => (
+        <ImageGalleryItem alt={tags} url={webformatURL} key={id} />
+      ))}
+    </ul>
   );
-}
+};
 
 export default ImageGallary;

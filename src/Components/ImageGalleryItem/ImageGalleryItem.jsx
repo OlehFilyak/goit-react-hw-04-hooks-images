@@ -1,13 +1,11 @@
 import React from "react";
 
-function ImageGallaryItem() {
+const ImageGallaryItem = ({ alt, url, id }) => {
   return (
-    <>
-      <li className="ImageGalleryItem">
-        <img src="" alt="" className="ImageGalleryItem-image" />
-      </li>
-    </>
+    <li className="ImageGalleryItem">
+      <img src={url} alt={alt} className="ImageGalleryItem-image" id={id} />
+    </li>
   );
-}
+};
 
 export default ImageGallaryItem;
