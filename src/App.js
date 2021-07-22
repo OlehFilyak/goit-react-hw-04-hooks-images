@@ -3,104 +3,117 @@ import { useState, useEffect } from "react";
 import ImageGallery from "./Components/ImageGallery";
 import Loader from "./Components/Loader";
 import Modal from "./Components/Modal";
-import Button from "./Components/Button";
+import LoadMoreButton from "./Components/LoadMoreBtn";
 import Searchbar from "./Components/Searchbar";
 
-import getPicturesAPI from "./helpers/fetch";
+import { onShowErrorNotification } from "./services/notifications/notifications";
+import getPicturesAPI from "./services/getpicturesAPI/getPicturesAPI";
 
 import "./App.css";
 
-function App() {
+export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [pageQuery, setPageQuery] = useState(1);
   const [images, setImages] = useState([]);
-  const [modalUrl, setModalUrl] = useState("");
-  const [showLoader, setShowLoader] = useState(false);
-
-  const closeModalByEsc = (e) => {
-    if (e.key === "Escape") {
-      setModalUrl("");
-    }
-  };
+  const [selectedImg, setSelectedImg] = useState(null);
+  const [altSelectedImg, setAltSelectedImg] = useState(null);
+  const [status, setStatus] = useState("idle");
 
   useEffect(() => {
-    if (modalUrl) {
-      window.addEventListener("keydown", closeModalByEsc);
-    } else {
-      window.removeEventListener("keydown", closeModalByEsc);
+    if (!searchQuery) {
+      return;
     }
-  }, [modalUrl]);
+    async function getFetchPictures() {
+      setStatus("pending");
 
-  const handleSetQuery = (e) => {
-    setSearchQuery(e.target.value);
-  };
+      try {
+        const images = await getPicturesAPI(searchQuery, pageQuery);
 
-  const handleGetPictures = async (e) => {
-    e.preventDefault();
-    setPageQuery(1);
-    setShowLoader(true);
-    // getPictures(searchQuery, pageQuery);
+        if (!images.length) {
+          throw new Error();
+        }
 
-    const {
-      data: { hits },
-    } = await getPicturesAPI(searchQuery, 1);
-    setShowLoader(false);
-    // console.log(resp); Потім
-    setImages(hits);
+        setImages((prevImages) => [...prevImages, ...images]);
+        setStatus("resolved");
 
-    setPageQuery((prevPage) => prevPage + 1);
-    // setSearchQuery("");
-  };
+        pageQuery > 1 &&
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+          });
+      } catch (error) {
+        console.log(error);
+        onShowErrorNotification();
+        setStatus("rejected");
+      }
+    }
+    getFetchPictures();
+  }, [pageQuery, searchQuery]);
 
-  const handleLoadMore = async () => {
-    setShowLoader(true);
-    const {
-      data: { hits },
-    } = await getPicturesAPI(searchQuery, pageQuery);
-    // console.log(hits);
-    setShowLoader(false);
-    setImages((prevState) => [...prevState, ...hits]);
-    setPageQuery((prevPage) => prevPage + 1);
-    handleScroll();
-  };
-
-  const handleScroll = () => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
-  };
-
-  const handleShowModal = (url) => {
-    setModalUrl(url);
-  };
-
-  const handleCloseModal = (e) => {
-    if (e.target !== e.currentTarget) {
+  const handleFormSubmit = (query) => {
+    if (searchQuery === query) {
       return;
     }
 
-    // if (e.target.nodeName === "IMG") { Те саме, що попередній приклад
-    //   return;
-    // }
-
-    setModalUrl("");
+    resetState();
+    setSearchQuery(query);
   };
-  return (
-    <div className="App">
-      <Searchbar
-        onSetQuery={handleSetQuery}
-        searchQuery={searchQuery}
-        onSubmit={handleGetPictures}
-      />
-      {showLoader && <Loader />}
-      <ImageGallery images={images} showModal={handleShowModal} />
-      {images.length && <Button onLoadMore={handleLoadMore} />}
-      {modalUrl && (
-        <Modal modalUrl={modalUrl} onCloseModal={handleCloseModal} />
-      )}
-    </div>
-  );
-}
 
-export default App;
+  const loadMoreBtnClick = () => {
+    setPageQuery((prevPage) => prevPage + 1);
+  };
+
+  const handleSelectedImage = (largeImageUrl, tags) => {
+    setSelectedImg(largeImageUrl);
+    setAltSelectedImg(tags);
+  };
+
+  const closeModal = () => {
+    setSelectedImg(null);
+  };
+
+  const resetState = () => {
+    setSearchQuery("");
+    setPageQuery(1);
+    setImages([]);
+    setSelectedImg(null);
+    setAltSelectedImg(null);
+    setStatus("idle");
+  };
+
+  if (status === "idle") {
+    return <Searchbar onSubmit={handleFormSubmit} />;
+  }
+
+  if (status === "pending") {
+    return (
+      <>
+        <Searchbar onSubmit={handleFormSubmit} />
+        <Loader />
+        <ImageGallery images={images} selectedImage={handleSelectedImage} />
+        {images.length > 0 && <LoadMoreButton onClick={loadMoreBtnClick} />}
+      </>
+    );
+  }
+
+  if (status === "resolved") {
+    return (
+      <>
+        <Searchbar onSubmit={handleFormSubmit} />
+        <ImageGallery images={images} selectedImage={handleSelectedImage} />
+        {selectedImg && (
+          <Modal
+            selectedImg={selectedImg}
+            tags={altSelectedImg}
+            onClose={closeModal}
+          />
+        )}
+        {images.length > 0 && <LoadMoreButton onClick={loadMoreBtnClick} />}
+      </>
+    );
+  }
+
+  if (status === "rejected") {
+    return <Searchbar onSubmit={handleFormSubmit} />;
+  }
+}
