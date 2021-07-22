@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { onShowInfoNotification } from "../../services/notifications/notifications";
 
+import css from "./Searchbar.module.css";
+
 export default function Searchbar({ onSubmit }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -26,21 +28,21 @@ export default function Searchbar({ onSubmit }) {
 
   return (
     <>
-      <header className="Searchbar">
-        <form className="SearchForm" onSubmit={handleSubmit}>
-          <button type="submit" className="SearchForm-button">
-            <span className="SearchForm-button-label">Search</span>
-          </button>
-
+      <header className={css.Searchbar}>
+        <form className={css.SearchForm} onSubmit={handleSubmit}>
           <input
             onChange={handleSearchQuery}
             value={searchQuery}
-            className="SearchForm-input"
+            className={css.SearchForm__input}
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
           />
+
+          <button type="submit" className={css.SearchForm__button}>
+            <span className={css.SearchForm__button_label}>Search</span>
+          </button>
         </form>
       </header>
     </>

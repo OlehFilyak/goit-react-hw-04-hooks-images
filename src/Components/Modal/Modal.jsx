@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import css from "./Modal.module.css";
+
 function Modal({ selectedImg, tags, onClose }) {
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -22,8 +24,8 @@ function Modal({ selectedImg, tags, onClose }) {
   };
   return (
     <>
-      <div className="Overlay" onClick={handleBackdropClick}>
-        <div className="Modal">
+      <div className={css.Overlay} onClick={handleBackdropClick}>
+        <div className={css.Modal}>
           <img src={selectedImg} alt={tags} />
         </div>
       </div>
