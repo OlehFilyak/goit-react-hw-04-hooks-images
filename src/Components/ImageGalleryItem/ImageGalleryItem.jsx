@@ -1,8 +1,8 @@
-const ImageGallaryItem = ({ alt, url, id, modalUrl, showModal }) => {
+const ImageGallaryItem = ({ alt, url, id, selectedImage }) => {
   return (
     <li className="ImageGalleryItem">
       <img
-        onClick={() => showModal(modalUrl)}
+        onClick={selectedImage}
         src={url}
         alt={alt}
         className="ImageGalleryItem-image"

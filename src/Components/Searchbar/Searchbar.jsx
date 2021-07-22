@@ -1,16 +1,39 @@
-import React from "react";
+import { useState } from "react";
+import { onShowInfoNotification } from "../../services/notifications/notifications";
 
-function Searchbar({ onSetQuery, searchQuery, onSubmit }) {
+export default function Searchbar({ onSubmit }) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchQuery = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (searchQuery.trim() === "") {
+      onShowInfoNotification();
+      return;
+    }
+
+    onSubmit(searchQuery);
+    resetState();
+  };
+
+  const resetState = () => {
+    setSearchQuery("");
+  };
+
   return (
     <>
       <header className="Searchbar">
-        <form className="SearchForm" onSubmit={onSubmit}>
+        <form className="SearchForm" onSubmit={handleSubmit}>
           <button type="submit" className="SearchForm-button">
             <span className="SearchForm-button-label">Search</span>
           </button>
 
           <input
-            onChange={onSetQuery}
+            onChange={handleSearchQuery}
             value={searchQuery}
             className="SearchForm-input"
             type="text"
@@ -23,5 +46,3 @@ function Searchbar({ onSetQuery, searchQuery, onSubmit }) {
     </>
   );
 }
-
-export default Searchbar;
