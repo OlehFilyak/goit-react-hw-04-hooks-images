@@ -35,12 +35,6 @@ export default function App() {
 
         setImages((prevImages) => [...prevImages, ...images]);
         setStatus("resolved");
-
-        pageQuery > 1 &&
-          window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: "smooth",
-          });
       } catch (error) {
         console.log(error);
         onShowErrorNotification();
@@ -49,6 +43,13 @@ export default function App() {
     }
     getFetchPictures();
   }, [pageQuery, searchQuery]);
+
+  const scrollDown = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   const handleFormSubmit = (query) => {
     if (searchQuery === query) {
@@ -100,7 +101,8 @@ export default function App() {
     return (
       <>
         <Searchbar onSubmit={handleFormSubmit} />
-        <ImageGallery images={images} selectedImage={handleSelectedImage} />
+        <ImageGallery images={images} handleSelectImage={handleSelectImage} />
+        {pageQuery > 1 && scrollDown()}
         {selectedImg && (
           <Modal
             selectedImg={selectedImg}
