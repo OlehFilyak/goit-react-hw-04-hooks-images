@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { onShowInfoNotification } from "../../services/notifications/notifications";
+import PropTypes from "prop-types";
 
 import css from "./Searchbar.module.css";
 
@@ -48,3 +49,7 @@ export default function Searchbar({ onSubmit }) {
     </>
   );
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
